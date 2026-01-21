@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 function TripScreen() {
   return (
     <View>
-      <Text>Trip Screen</Text>
+      <Text>Filter Trip Screen From TourPlanScreen</Text>
     </View>
   );
 }
