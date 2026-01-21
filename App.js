@@ -1,20 +1,128 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { ActivityIndicator } from "react-native";
+import SplashScreen from "./screens/SplashScreen";
+import { useFonts } from "expo-font";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import SignUpScreen from "./screens/SignUpScreen";
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
+import Avatar from "./components/Avatar";
+import { Ionicons } from "@expo/vector-icons";
+import TourPlanScreen from "./screens/TourPlanScreen";
 
-export default function App() {
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function Home() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: "#E5FE5A",
+          position: "absolute",
+          bottom: 40,
+          marginHorizontal: 20,
+          borderRadius: 50,
+          height: 60,
+          paddingBottom: 5,
+          elevation: 5,
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 10,
+        },
+        headerRight: () => <Avatar />,
+        headerStyle: { backgroundColor: "#1c1c1d" },
+        title: "TripWise",
+        headerTitleStyle: { color: "#FFFFFF", fontFamily: "PoppinBold" },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          title: "Home",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color="#151517"
+            />
+          ),
+          tabBarIconStyle: { marginTop: 8 },
+        }}
+      />
+      <Tab.Screen
+        name="TourPlan"
+        component={TourPlanScreen}
+        options={{
+          title: "Tour Plan",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "map" : "map-outline"}
+              size={24}
+              color="#151517"
+            />
+          ),
+          tabBarIconStyle: { marginTop: 8 },
+          tabBarHideOnKeyboard: true,
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  const [fontsLoaded] = useFonts({
+    Akronim: require("./assets/fonts/Akronim-Regular.ttf"),
+    PoppinBold: require("./assets/fonts/Poppins-Bold.ttf"),
+    PoppinSemiBold: require("./assets/fonts/Poppins-SemiBold.ttf"),
+    PoppinMedium: require("./assets/fonts/Poppins-Medium.ttf"),
+    PoppinRegular: require("./assets/fonts/Poppins-Regular.ttf"),
+    PoppinExtraBold: require("./assets/fonts/Poppins-ExtraBold.ttf"),
+    poppinLight: require("./assets/fonts/Poppins-Light.ttf"),
+    PoopinItalic: require("./assets/fonts/Poppins-Italic.ttf"),
+    PoopinBoldItalic: require("./assets/fonts/Poppins-BoldItalic.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator />;
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+      <StatusBar style="auto" />
+    </NavigationContainer>
+  );
+}
