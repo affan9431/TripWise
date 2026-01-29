@@ -1,7 +1,16 @@
-import { View, Text, ImageBackground, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
 import Input from "../components/Input";
 import { useState } from "react";
 import Button from "../components/Button";
+import { logIn } from "../util/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function LoginScreen({ navigation }) {
   const [formValues, setFormValues] = useState({
@@ -9,7 +18,26 @@ function LoginScreen({ navigation }) {
     password: "",
   });
 
-  console.log(formValues);
+  const [showPassword, setShowPassword] = useState(true);
+
+  const onSubmit = async () => {
+    const { email, password } = formValues;
+
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter your email address and password");
+      return;
+    }
+
+    try {
+      const token = await logIn(formValues);
+
+      await AsyncStorage.setItem("userToken", token);
+      Alert.alert("Success", "Login successfully!");
+      navigation.navigate("Home");
+    } catch (error) {
+      Alert.alert("Failed", JSON.stringify(error));
+    }
+  };
 
   const onChangeInputHandler = (inputType, enteredValue) => {
     setFormValues((currentValues) => {
@@ -24,48 +52,56 @@ function LoginScreen({ navigation }) {
       resizeMode="cover"
       imageStyle={styles.backgroundImage}
     >
-      <View style={styles.headerTextContainer}>
-        <Text style={[styles.headerBaseText, styles.text1]}>Welcome back</Text>
-        <Text style={[styles.headerBaseText, styles.text2]}>
-          Access your saved trips and continue planning.
-        </Text>
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Input
-          placeholder="Email Address"
-          value={formValues.email}
-          onChangeText={(text) => onChangeInputHandler("email", text)}
-        />
-        <Input
-          placeholder="Password"
-          value={formValues.password}
-          onChangeText={(text) => onChangeInputHandler("password", text)}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.buttonStyle}
-          textStyle={styles.textStyle}
-          onPress={() => navigation.navigate("Home")}
-        >
-          Log In
-        </Button>
-        <View style={styles.textContainer}>
-          <Text style={[styles.baseText, { color: "#fff" }]}>
-            Don’t have an account?
+      <ScrollView>
+        <View style={styles.headerTextContainer}>
+          <Text style={[styles.headerBaseText, styles.text1]}>
+            Welcome back
           </Text>
-          <Text
-            style={[
-              styles.baseText,
-              { color: "#5684f6", textDecorationLine: "underline" },
-            ]}
-            onPress={() => navigation.navigate("SignUp")}
-          >
-            Signup
+          <Text style={[styles.headerBaseText, styles.text2]}>
+            Access your saved trips and continue planning.
           </Text>
         </View>
-      </View>
+
+        <View style={styles.inputContainer}>
+          <Input
+            placeholder="Email Address"
+            value={formValues.email}
+            onChangeText={(text) => onChangeInputHandler("email", text)}
+          />
+          <Input
+            placeholder="Password"
+            value={formValues.password}
+            onChangeText={(text) => onChangeInputHandler("password", text)}
+            secureTextEntry={showPassword}
+            autoCorrect={false}
+            isPassword={true}
+            onTogglePassword={() => setShowPassword(!showPassword)}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            style={styles.buttonStyle}
+            textStyle={styles.textStyle}
+            onPress={onSubmit}
+          >
+            Log In
+          </Button>
+          <View style={styles.textContainer}>
+            <Text style={[styles.baseText, { color: "#fff" }]}>
+              Don’t have an account?
+            </Text>
+            <Text
+              style={[
+                styles.baseText,
+                { color: "#5684f6", textDecorationLine: "underline" },
+              ]}
+              onPress={() => navigation.navigate("SignUp")}
+            >
+              Signup
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
     </ImageBackground>
   );
 }

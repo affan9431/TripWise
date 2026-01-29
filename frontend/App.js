@@ -11,9 +11,62 @@ import HomeScreen from "./screens/HomeScreen";
 import Avatar from "./components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
 import TourPlanScreen from "./screens/TourPlanScreen";
+import TripScreen from "./screens/TripScreen";
+import TripDetailsScreen from "./screens/TripDetailsScreen";
+import FovuriteTripScreen from "./screens/FovuriteTripScreen";
+import IntrestedTripScreen from "./screens/IntrestedTripScreen";
+import DayToDayPlanScreen from "./screens/DayToDayPlanScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+function HomeStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1c1c1d" },
+        headerTintColor: "white",
+      }}
+    >
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name="IntrestedTrip" component={IntrestedTripScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function TripStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1c1c1d" },
+        headerTintColor: "white",
+      }}
+    >
+      <Stack.Screen
+        name="TourPlan"
+        component={TourPlanScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="TripScreen"
+        component={TripScreen}
+        options={{
+          title: "Filter Trip",
+        }}
+      />
+      <Stack.Screen name="TripDetails" component={TripDetailsScreen} />
+      <Stack.Screen name="TripDayToDay" component={DayToDayPlanScreen} />
+    </Stack.Navigator>
+  );
+}
 
 function Home() {
   return (
@@ -39,10 +92,10 @@ function Home() {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Home Screen"
+        component={HomeStack}
         options={{
-          title: "Home",
+          tabBarLabel: "Home",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? "home" : "home-outline"}
@@ -55,12 +108,30 @@ function Home() {
       />
       <Tab.Screen
         name="TourPlan"
-        component={TourPlanScreen}
+        component={TripStack}
         options={{
-          title: "Tour Plan",
+          tabBarLabel: "Plan Tour",
+
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? "map" : "map-outline"}
+              size={24}
+              color="#151517"
+            />
+          ),
+          tabBarIconStyle: { marginTop: 8 },
+          tabBarHideOnKeyboard: true,
+        }}
+      />
+      <Tab.Screen
+        name="FavouriteScreen"
+        component={FovuriteTripScreen}
+        options={{
+          tabBarLabel: "Favourite Tour",
+
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "heart" : "heart-outline"}
               size={24}
               color="#151517"
             />

@@ -1,7 +1,17 @@
-import { View, Text, ImageBackground, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
 import Input from "../components/Input";
 import { useState } from "react";
 import Button from "../components/Button";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signUp } from "../util/database";
 
 function SignUpScreen({ navigation }) {
   const [formValues, setFormValues] = useState({
@@ -11,7 +21,35 @@ function SignUpScreen({ navigation }) {
     confirmPassword: "",
   });
 
-  console.log(formValues);
+  const [showPassword, setShowPassword] = useState(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+
+  const onSubmit = async () => {
+    const { fullName, email, password, confirmPassword } = formValues;
+    console.log(fullName, email, password, confirmPassword);
+
+    // Check if any field is empty
+    if (!fullName || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    // Check if passwords match
+    if (confirmPassword !== password) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    try {
+      const token = await signUp(formValues);
+
+      await AsyncStorage.setItem("userToken", token);
+      Alert.alert("Success", "Account created successfully!");
+      navigation.navigate("Home");
+    } catch (error) {
+      Alert.alert("Failed", JSON.stringify(error));
+    }
+  };
 
   const onChangeInputHandler = (inputType, enteredValue) => {
     setFormValues((currentValues) => {
@@ -26,60 +64,74 @@ function SignUpScreen({ navigation }) {
       resizeMode="cover"
       imageStyle={styles.backgroundImage}
     >
-      <View style={styles.headerTextContainer}>
-        <Text style={[styles.headerBaseText, styles.text1]}>
-          Create your TripGenie account
-        </Text>
-        <Text style={[styles.headerBaseText, styles.text2]}>
-          Save trips, access them offline, and plan smarter.
-        </Text>
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Input
-          placeholder="Full Name"
-          value={formValues.fullName}
-          onChangeText={(text) => onChangeInputHandler("fullName", text)}
-        />
-        <Input
-          placeholder="Email Address"
-          value={formValues.email}
-          onChangeText={(text) => onChangeInputHandler("email", text)}
-        />
-        <Input
-          placeholder="Password"
-          value={formValues.password}
-          onChangeText={(text) => onChangeInputHandler("password", text)}
-        />
-        <Input
-          placeholder="Confirm Password"
-          value={formValues.confirmPassword}
-          onChangeText={(text) => onChangeInputHandler("confirmPassword", text)}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.buttonStyle}
-          textStyle={styles.textStyle}
-          onPress={() => {}}
-        >
-          Sign Up
-        </Button>
-        <View style={styles.textContainer}>
-          <Text style={[styles.baseText, { color: "#fff" }]}>
-            Already have an account?
+      <ScrollView>
+        <View style={styles.headerTextContainer}>
+          <Text style={[styles.headerBaseText, styles.text1]}>
+            Create your TripGenie account
           </Text>
-          <Text
-            style={[
-              styles.baseText,
-              { color: "#5684f6", textDecorationLine: "underline" },
-            ]}
-            onPress={() => navigation.navigate("Login")}
-          >
-            Log In
+          <Text style={[styles.headerBaseText, styles.text2]}>
+            Save trips, access them offline, and plan smarter.
           </Text>
         </View>
-      </View>
+
+        <View style={styles.inputContainer}>
+          <Input
+            placeholder="Full Name"
+            value={formValues.fullName}
+            onChangeText={(text) => onChangeInputHandler("fullName", text)}
+          />
+          <Input
+            placeholder="Email Address"
+            value={formValues.email}
+            onChangeText={(text) => onChangeInputHandler("email", text)}
+          />
+          <Input
+            placeholder="Password"
+            value={formValues.password}
+            onChangeText={(text) => onChangeInputHandler("password", text)}
+            secureTextEntry={showPassword}
+            autoCorrect={false}
+            isPassword={true}
+            onTogglePassword={() => setShowPassword(!showPassword)}
+          />
+          <Input
+            placeholder="Confirm Password"
+            value={formValues.confirmPassword}
+            onChangeText={(text) =>
+              onChangeInputHandler("confirmPassword", text)
+            }
+            secureTextEntry={showConfirmPassword}
+            autoCorrect={false}
+            isPassword={true}
+            onTogglePassword={() =>
+              setShowConfirmPassword(!showConfirmPassword)
+            }
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            style={styles.buttonStyle}
+            textStyle={styles.textStyle}
+            onPress={onSubmit}
+          >
+            Sign Up
+          </Button>
+          <View style={styles.textContainer}>
+            <Text style={[styles.baseText, { color: "#fff" }]}>
+              Already have an account?
+            </Text>
+            <Text
+              style={[
+                styles.baseText,
+                { color: "#5684f6", textDecorationLine: "underline" },
+              ]}
+              onPress={() => navigation.navigate("Login")}
+            >
+              Log In
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
     </ImageBackground>
   );
 }

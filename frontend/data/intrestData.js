@@ -100,3 +100,56 @@ export const intrestData = [
     image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429",
   },
 ];
+
+export const tripStyleData = [
+  {
+    id: 1,
+    title: "🌿 Relaxed",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5",
+  },
+  {
+    id: 2,
+    title: "⚡ Energetic",
+    image: "https://images.unsplash.com/photo-1514565131-fce0801e5785",
+  },
+  {
+    id: 3,
+    title: "🍜 Food & Fun",
+    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+  },
+  {
+    id: 4,
+    title: "🌿 Calm",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
+  },
+  {
+    id: 5,
+    title: "🕊️ Reflective",
+    image: "https://images.unsplash.com/photo-1499346030926-9a72daac6c63",
+  },
+  {
+    id: 6,
+    title: "♨️ Onsen & Nature",
+    image: "https://images.unsplash.com/photo-1591361455950-1d233eaed4d0",
+  },
+  {
+    id: 7,
+    title: "❄️ Cool City",
+    image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa",
+  },
+  {
+    id: 8,
+    title: "🏯 Cultural",
+    image: "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d",
+  },
+  {
+    id: 9,
+    title: "⚙️ Balanced",
+    image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1",
+  },
+  {
+    id: 10,
+    title: "🌊 Chill City",
+    image: "https://images.unsplash.com/photo-1480796927426-f609979314bd",
+  },
+];

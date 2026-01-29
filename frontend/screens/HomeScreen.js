@@ -3,7 +3,7 @@ import Slider from "../components/Slider";
 import Intrest from "../components/Intrest";
 import { intrestData } from "../data/intrestData";
 
-function HomeScreen() {
+function HomeScreen({ navigation }) {
   return (
     <View
       style={{
@@ -18,7 +18,7 @@ function HomeScreen() {
         intrestData={intrestData}
         onPress={(item) => {
           console.log("Redirecting to:", item.title);
-          // navigation.navigate('SomeScreen', { category: item.title })
+          navigation.navigate("IntrestedTrip", { category: item.title });
         }}
       />
     </View>

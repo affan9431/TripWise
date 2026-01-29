@@ -11,19 +11,21 @@ import TripDurationInput from "../components/TripDurationInput";
 import { useState } from "react";
 import Input from "../components/Input";
 import Intrest from "../components/Intrest";
-import { intrestData } from "../data/intrestData";
+import { tripStyleData } from "../data/intrestData";
 import Button from "../components/Button";
+import { filterTrip } from "../util/database";
 
-export default function TourPlanScreen() {
+export default function TourPlanScreen({ navigation }) {
   const [tourPlanData, setTourPlanData] = useState({
     budgetPrice: 0,
     tripDuration: 4,
     startDate: "22/1/2026",
-    tripStyle: "Adventure",
+    tripStyle: "",
     groupSize: "1",
   });
 
   const [title, setTitle] = useState("");
+  const [isLoading, setIsloading] = useState(false);
 
   function tourPlanDataHandler(inputType, enteredValue) {
     setTourPlanData((prev) => {
@@ -61,9 +63,26 @@ export default function TourPlanScreen() {
     });
   }
 
-  function onSubmit() {
-    console.log("SENDIND DATA TO BACKEND...");
-    console.log(tourPlanData);
+  async function onSubmit() {
+    setIsloading(true);
+    try {
+      const { budgetPrice, tripStyle, groupSize } = tourPlanData;
+      let budgetPriceInInr = Math.round(budgetPrice * 91.66);
+      const trips = await filterTrip(budgetPriceInInr, tripStyle, groupSize);
+      setIsloading(false);
+      navigation.navigate("TripScreen", { trips });
+    } catch (error) {
+      setIsloading(false);
+      Alert.alert("Failed", "Something went wrong! Please try again.");
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <View style={styles.fallBackContainer}>
+        <Text style={styles.fallBackText}>Loading...</Text>
+      </View>
+    );
   }
 
   return (
@@ -106,7 +125,7 @@ export default function TourPlanScreen() {
           </View>
           <Intrest
             title="Trip Style"
-            intrestData={intrestData}
+            intrestData={tripStyleData}
             style={{
               borderWidth: 3,
               borderColor: "#E5FE5A",
@@ -140,6 +159,16 @@ export default function TourPlanScreen() {
 }
 
 const styles = StyleSheet.create({
+  fallBackContainer: {
+    flex: 1,
+    backgroundColor: "#151517",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fallBackText: {
+    color: "#fff",
+    fontSize: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: "#151517",
