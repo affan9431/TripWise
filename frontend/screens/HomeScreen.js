@@ -17,7 +17,6 @@ function HomeScreen({ navigation }) {
         title="Explore By Intreset"
         intrestData={intrestData}
         onPress={(item) => {
-          console.log("Redirecting to:", item.title);
           navigation.navigate("IntrestedTrip", { category: item.title });
         }}
       />

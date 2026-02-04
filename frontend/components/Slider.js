@@ -1,14 +1,12 @@
+import { useEffect, useState } from "react";
 import {
-  View,
+  Dimensions,
   FlatList,
   Image,
-  Text,
   StyleSheet,
-  Dimensions,
-  TouchableOpacity,
+  Text,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
 
 const { width } = Dimensions.get("window");
 
@@ -35,7 +33,7 @@ const sliderData = [
   {
     id: "2",
     image: require("../assets/images/japan2.jpg"),
-    title: "Taj Mahal",
+    title: "India",
   },
   {
     id: "3",
@@ -108,18 +106,6 @@ function Slider() {
               {/* Image */}
               <Image source={item.image} style={styles.image} />
 
-              {/* Save Icon */}
-              <TouchableOpacity
-                style={styles.saveIcon}
-                onPress={handleToggleHeart}
-              >
-                <Ionicons
-                  name={toggleHeart ? "heart" : "heart-outline"}
-                  size={24}
-                  color="#E5FE5A"
-                />
-              </TouchableOpacity>
-
               {/* Title */}
               <View style={styles.textWrapper}>
                 <Text style={styles.title}>{item.title}</Text>
@@ -145,14 +131,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "cover",
-  },
-  saveIcon: {
-    position: "absolute",
-    top: 14,
-    right: 14,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    padding: 8,
-    borderRadius: 20,
   },
   textWrapper: {
     position: "absolute",

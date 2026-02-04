@@ -1,21 +1,54 @@
 import { Image, View, Text, StyleSheet, Pressable } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import {
+  getFavouriteTrip,
+  makeFavouriteTrip,
+  removeFavouriteTrip,
+} from "../util/database";
+import { jwtDecode } from "jwt-decode";
 
 function TripCard({ item, onPress, screenType }) {
-  console.log("FROM TRIP CARD: ", item);
-  // Determine which type of data we're displaying
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  useEffect(() => {
+    async function checkIfFavourite() {
+      const token = await AsyncStorage.getItem("userToken");
+      const decoded = jwtDecode(token);
+      const trips = await getFavouriteTrip(decoded.id);
+      trips.forEach((trip) => {
+        if (trip._id === item._id) {
+          setIsFavourite(true);
+        }
+      });
+    }
+    checkIfFavourite();
+  }, [item._id]);
+
   const name = item.name || item.hotelName;
   const image = item.image || item.hotelImage;
   const description = item.tripStyle || item.hotelDescription;
 
-  // For price, handle both trip cost and hotel cost
   const price = item.estimatedCost
     ? `₹${item.estimatedCost.toLocaleString()} • 5 days`
     : `₹${item.estimatedCostPerNight?.toLocaleString()}/night`;
 
-  // Buffer cost only exists for trips
   const showBuffer = item.bufferCost !== undefined;
+
+  const favouriteTripHandler = async () => {
+    const newsFavourite = !isFavourite;
+    setIsFavourite(newsFavourite);
+
+    const token = await AsyncStorage.getItem("userToken");
+    const decoded = jwtDecode(token);
+    if (newsFavourite) {
+      await makeFavouriteTrip(decoded.id, item._id);
+    } else {
+      await removeFavouriteTrip(decoded.id, item._id);
+    }
+  };
 
   return (
     <Pressable style={styles.card} onPress={onPress}>
@@ -64,7 +97,12 @@ function TripCard({ item, onPress, screenType }) {
         <View style={styles.iconsContainer}>
           {/* Heart Icon - Top Right */}
           <Pressable style={styles.heartIcon}>
-            <Ionicons name="heart-outline" size={24} color="#E5FE5A" />
+            <Ionicons
+              name={isFavourite ? "heart" : "heart-outline"}
+              size={24}
+              color="#E5FE5A"
+              onPress={favouriteTripHandler}
+            />
           </Pressable>
 
           {/* Arrow Icon - Bottom Right */}

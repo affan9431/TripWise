@@ -10,6 +10,7 @@ function Input({
   secureTextEntry,
   autoCorrect = true,
   isPassword = false,
+  editable = true,
 }) {
   return (
     <View>
@@ -22,6 +23,7 @@ function Input({
         secureTextEntry={secureTextEntry}
         autoCapitalize="none"
         autoCorrect={autoCorrect}
+        editable={editable}
       />
       {isPassword && (
         <Pressable onPress={onTogglePassword} style={styles.iconContainer}>

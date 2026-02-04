@@ -1,10 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 function Avatar() {
   const [userInfo, setUserInfo] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -41,13 +43,16 @@ function Avatar() {
   };
 
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={() => navigation.navigate("UserProfile")}
+    >
       <View style={styles.avatarCircle}>
         <Text style={styles.initialsText}>
           {userInfo ? getInitials(userInfo.name) : "?"}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -64,13 +69,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#4A90E2", // Change to your preferred color
+    backgroundColor: "#E5FE5A",
     justifyContent: "center",
     alignItems: "center",
   },
   initialsText: {
-    color: "#FFFFFF",
+    color: "#000000",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "PoppinBold",
   },
 });

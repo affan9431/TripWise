@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import SplashScreen from "./screens/SplashScreen";
 import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
@@ -16,6 +16,8 @@ import TripDetailsScreen from "./screens/TripDetailsScreen";
 import FovuriteTripScreen from "./screens/FovuriteTripScreen";
 import IntrestedTripScreen from "./screens/IntrestedTripScreen";
 import DayToDayPlanScreen from "./screens/DayToDayPlanScreen";
+import UserProfileScreen from "./screens/UserProfileScreen";
+import Logout from "./components/Logout";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,6 +38,8 @@ function HomeStack() {
         }}
       />
       <Stack.Screen name="IntrestedTrip" component={IntrestedTripScreen} />
+      <Stack.Screen name="TripDetails" component={TripDetailsScreen} />
+      <Stack.Screen name="TripDayToDay" component={DayToDayPlanScreen} />
     </Stack.Navigator>
   );
 }
@@ -60,6 +64,27 @@ function TripStack() {
         component={TripScreen}
         options={{
           title: "Filter Trip",
+        }}
+      />
+      <Stack.Screen name="TripDetails" component={TripDetailsScreen} />
+      <Stack.Screen name="TripDayToDay" component={DayToDayPlanScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function FavouriteStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#1c1c1d" },
+        headerTintColor: "white",
+      }}
+    >
+      <Stack.Screen
+        name="FavouriteScreen"
+        component={FovuriteTripScreen}
+        options={{
+          headerShown: false,
         }}
       />
       <Stack.Screen name="TripDetails" component={TripDetailsScreen} />
@@ -103,6 +128,7 @@ function Home() {
               color="#151517"
             />
           ),
+          tabBarActiveTintColor: "#151517",
           tabBarIconStyle: { marginTop: 8 },
         }}
       />
@@ -120,12 +146,13 @@ function Home() {
             />
           ),
           tabBarIconStyle: { marginTop: 8 },
+          tabBarActiveTintColor: "#151517",
           tabBarHideOnKeyboard: true,
         }}
       />
       <Tab.Screen
         name="FavouriteScreen"
-        component={FovuriteTripScreen}
+        component={FavouriteStack}
         options={{
           tabBarLabel: "Favourite Tour",
 
@@ -137,6 +164,7 @@ function Home() {
             />
           ),
           tabBarIconStyle: { marginTop: 8 },
+          tabBarActiveTintColor: "#151517",
           tabBarHideOnKeyboard: true,
         }}
       />
@@ -190,6 +218,16 @@ export default function App() {
           component={Home}
           options={{
             headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfileScreen}
+          options={{
+            headerStyle: { backgroundColor: "#1c1c1d" },
+            headerTintColor: "white",
+            title: "User Profile",
+            headerRight: () => <Logout />,
           }}
         />
       </Stack.Navigator>

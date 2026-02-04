@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -13,16 +13,71 @@ import { Ionicons } from "@expo/vector-icons";
 import InfoCard from "../components/InfoCard";
 import TripCard from "../components/TripCard";
 import PlaceCard from "../components/PlaceCard";
+import {
+  getFavouriteTrip,
+  makeFavouriteTrip,
+  removeFavouriteTrip,
+} from "../util/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 function TripDetailsScreen({ navigation, route }) {
   const [tour, setTour] = useState();
   const [favouriteTour, setFavouriteTour] = useState(false);
 
+  useEffect(() => {
+    async function checkIfFavourite() {
+      const token = await AsyncStorage.getItem("userToken");
+      const decoded = jwtDecode(token);
+      const trips = await getFavouriteTrip(decoded.id);
+      trips.forEach((trip) => {
+        if (trip._id === tour?._id) {
+          setFavouriteTour(true);
+        }
+      });
+    }
+    checkIfFavourite();
+  }, [tour?._id]);
+
   useLayoutEffect(() => {
-    const title = route.params.item.name;
-    setTour(route.params.item);
-    navigation.setOptions({ title: `${title}` });
-  }, []);
+    const screenType = route.params?.screenType;
+    const title = route.params?.item?.name;
+
+    if (title) {
+      navigation.setOptions({ title: `${title}` });
+    }
+
+    if (route.params?.item) {
+      setTour(route.params.item);
+    }
+
+    if (screenType === "favourite") {
+      const parent = navigation.getParent();
+      parent?.setOptions({ headerShown: false });
+    }
+
+    return () => {
+      const parent = navigation.getParent();
+      if (screenType === "favourite") {
+        parent?.setOptions({
+          headerShown: true,
+        });
+      }
+    };
+  }, [navigation, route.params]);
+
+  const favouriteTripHandler = async () => {
+    const newsFavourite = !favouriteTour;
+    setFavouriteTour(newsFavourite);
+
+    const token = await AsyncStorage.getItem("userToken");
+    const decoded = jwtDecode(token);
+    if (newsFavourite) {
+      await makeFavouriteTrip(decoded.id, tour._id);
+    } else {
+      await removeFavouriteTrip(decoded.id, tour._id);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -30,10 +85,7 @@ function TripDetailsScreen({ navigation, route }) {
         <View style={styles.imageContainer}>
           <Image source={{ uri: tour?.image }} style={styles.photo} />
           <Text style={styles.text}>{tour?.name}</Text>
-          <Pressable
-            style={styles.heartIcon}
-            onPress={() => setFavouriteTour(!favouriteTour)}
-          >
+          <Pressable style={styles.heartIcon} onPress={favouriteTripHandler}>
             <Ionicons
               name={favouriteTour ? "heart" : "heart-outline"}
               size={24}
@@ -89,7 +141,7 @@ function TripDetailsScreen({ navigation, route }) {
       </ScrollView>
       <Pressable
         style={styles.fixedFooter}
-        onPress={() => navigation.navigate("TripDayToDay")}
+        onPress={() => navigation.navigate("TripDayToDay", { tour })}
       >
         <Text style={styles.fixedFooterText}>Day To Day Plan</Text>
       </Pressable>

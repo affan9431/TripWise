@@ -70,3 +70,100 @@ exports.logIn = async (req, res, next) => {
     return next(new AppError("Authentication failed", 404));
   }
 };
+
+exports.addFovouriteTrip = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { tripId } = req.body;
+    if (!userId || !tripId)
+      return next(new AppError("Missing required fields", 400));
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: { favouritesTrips: tripId }, // 👈 magic
+      },
+      { new: true },
+    );
+
+    res
+      .status(200)
+      .json({ status: "Success", message: "Trip added as a favourite  trip." });
+  } catch (error) {
+    console.error(error);
+    return next(new AppError("Failed to add favourite trip", 404));
+  }
+};
+
+exports.removeFavouriteTrip = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { tripId } = req.body;
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: { favouritesTrips: tripId },
+      },
+      { new: true },
+    );
+
+    res.status(200).json({
+      status: "success",
+      message: "Trip removed from favourites",
+    });
+  } catch (error) {
+    return next(new AppError("Failed to remove favourite trip", 500));
+  }
+};
+
+exports.getFavouritesTrips = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) return next(new AppError("Missing required fields", 400));
+
+    const user = await User.findById(userId);
+    res.status(200).json({
+      status: "success",
+      data: user.favouritesTrips,
+    });
+  } catch (error) {
+    return next(new AppError("Failed to get favourite trips", 500));
+  }
+};
+
+exports.updateUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { fullName } = req.body;
+
+    if (!fullName || !userId)
+      return next(new AppError("Missing required fields", 400));
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { fullName },
+      {
+        new: true,
+        runValidators: true,
+        select: "-password -__v",
+      },
+    );
+    console.log(user);
+
+    const token = generateToken({
+      name: user.fullName,
+      id: user._id,
+      email: user.email,
+    });
+
+    res.status(200).json({
+      status: "success",
+      token,
+      message: "User updated successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return next(new AppError("Failed to update user", 500));
+  }
+};

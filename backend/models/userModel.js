@@ -15,15 +15,29 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  favouritesTrips: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Trip",
+    },
+  ],
   createdAt: {
     type: Date,
   },
-});
+}); 
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
   return next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "favouritesTrips",
+    select: "-__v",
+  });
+  next();
 });
 
 userSchema.methods.comparePassword = async function (

@@ -26,7 +26,6 @@ function SignUpScreen({ navigation }) {
 
   const onSubmit = async () => {
     const { fullName, email, password, confirmPassword } = formValues;
-    console.log(fullName, email, password, confirmPassword);
 
     // Check if any field is empty
     if (!fullName || !email || !password || !confirmPassword) {
