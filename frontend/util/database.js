@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const IP_ADDRESS = "192.168.1.70";
+const IP_ADDRESS = "10.19.197.242";
 
 const BASE_URL = `http://${IP_ADDRESS}:5000`;
 
@@ -84,6 +84,18 @@ export async function updateUser(userId, updateData) {
       updateData,
     );
     return res.data.token;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function chatbotResponse(message, history) {
+  try {
+    const res = await axios.post(`${BASE_URL}/api/v1/chatbot/chat`, {
+      message,
+      history,
+    });
+    return res.data.reply;
   } catch (error) {
     throw error;
   }

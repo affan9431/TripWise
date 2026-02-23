@@ -27,7 +27,6 @@ function IntrestedTripScreen({ navigation, route }) {
         setIsLoading(true);
         const data = await getIntrestedTrips(title);
         setTrips(data);
-        console.log("End");
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -57,7 +56,7 @@ function IntrestedTripScreen({ navigation, route }) {
               item={item}
               screenType="intrest"
               onPress={() => {
-                navigation.navigate("TripDetails", { item });
+                navigation.navigate("TripDetails", { item, screenType: "IntrestedTrip" });
               }}
             />
           )}

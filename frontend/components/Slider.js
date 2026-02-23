@@ -54,7 +54,7 @@ function Slider() {
         updated.push(first);
         return updated;
       });
-    }, 8000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);

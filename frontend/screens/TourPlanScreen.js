@@ -1,25 +1,25 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  Alert,
-  ScrollView,
-} from "react-native";
-import RangeInput from "../components/RangeInput";
-import TripDurationInput from "../components/TripDurationInput";
 import { useState } from "react";
+import {
+  Alert,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import Button from "../components/Button";
 import Input from "../components/Input";
 import Intrest from "../components/Intrest";
+import RangeInput from "../components/RangeInput";
+import TripDurationInput from "../components/TripDurationInput";
 import { tripStyleData } from "../data/intrestData";
-import Button from "../components/Button";
 import { filterTrip } from "../util/database";
 
 export default function TourPlanScreen({ navigation }) {
   const [tourPlanData, setTourPlanData] = useState({
     budgetPrice: 0,
     tripDuration: 4,
-    startDate: "22/1/2026",
+    startDate: "2026-01-22",
     tripStyle: "",
     groupSize: "1",
   });
@@ -64,16 +64,45 @@ export default function TourPlanScreen({ navigation }) {
   }
 
   async function onSubmit() {
-    setIsloading(true);
     try {
-      const { budgetPrice, tripStyle, groupSize } = tourPlanData;
+      const { budgetPrice, tripStyle, groupSize, startDate } = tourPlanData;
       let budgetPriceInInr = Math.round(budgetPrice * 91.66);
+      const newDate = new Date();
+      newDate.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(startDate);
+      selectedDate.setHours(0, 0, 0, 0);
+
+      if (!budgetPrice) {
+        Alert.alert(
+          "Almost There ✨",
+          "Set your travel budget to unlock your personalized trip experience.",
+        );
+        return;
+      }
+
+      if (newDate.getTime() >= selectedDate.getTime()) {
+        Alert.alert(
+          "Date Not Available",
+          "Please choose a future date to start your journey.",
+        );
+        return;
+      }
+
+      if (!tripStyle) {
+        Alert.alert(
+          "One Last Step ✈️",
+          "Choose your preferred trip style so we can craft the perfect journey for you.",
+        );
+        return;
+      }
+
+      setIsloading(true);
       const trips = await filterTrip(budgetPriceInInr, tripStyle, groupSize);
-      setIsloading(false);
       navigation.navigate("TripScreen", { trips });
     } catch (error) {
-      setIsloading(false);
       Alert.alert("Failed", "Something went wrong! Please try again.");
+    } finally {
+      setIsloading(false);
     }
   }
 

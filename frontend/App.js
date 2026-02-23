@@ -1,23 +1,25 @@
-import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, View } from "react-native";
-import SplashScreen from "./screens/SplashScreen";
-import { useFonts } from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import SignUpScreen from "./screens/SignUpScreen";
-import LoginScreen from "./screens/LoginScreen";
-import HomeScreen from "./screens/HomeScreen";
+import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
+import { ActivityIndicator } from "react-native";
 import Avatar from "./components/Avatar";
-import { Ionicons } from "@expo/vector-icons";
-import TourPlanScreen from "./screens/TourPlanScreen";
-import TripScreen from "./screens/TripScreen";
-import TripDetailsScreen from "./screens/TripDetailsScreen";
-import FovuriteTripScreen from "./screens/FovuriteTripScreen";
-import IntrestedTripScreen from "./screens/IntrestedTripScreen";
-import DayToDayPlanScreen from "./screens/DayToDayPlanScreen";
-import UserProfileScreen from "./screens/UserProfileScreen";
 import Logout from "./components/Logout";
+import { ChatContextProvider } from "./contexts/ChatContext";
+import ChatScreen from "./screens/ChatScreen";
+import DayToDayPlanScreen from "./screens/DayToDayPlanScreen";
+import FovuriteTripScreen from "./screens/FovuriteTripScreen";
+import HomeScreen from "./screens/HomeScreen";
+import IntrestedTripScreen from "./screens/IntrestedTripScreen";
+import LoginScreen from "./screens/LoginScreen";
+import SignUpScreen from "./screens/SignUpScreen";
+import SplashScreen from "./screens/SplashScreen";
+import TourPlanScreen from "./screens/TourPlanScreen";
+import TripDetailsScreen from "./screens/TripDetailsScreen";
+import TripScreen from "./screens/TripScreen";
+import UserProfileScreen from "./screens/UserProfileScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,6 +42,13 @@ function HomeStack() {
       <Stack.Screen name="IntrestedTrip" component={IntrestedTripScreen} />
       <Stack.Screen name="TripDetails" component={TripDetailsScreen} />
       <Stack.Screen name="TripDayToDay" component={DayToDayPlanScreen} />
+      <Stack.Screen
+        name="ChatScreen"
+        component={ChatScreen}
+        options={{
+          title: "Plan with TripWise",
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -53,7 +62,7 @@ function TripStack() {
       }}
     >
       <Stack.Screen
-        name="TourPlan"
+        name="Plan Tour"
         component={TourPlanScreen}
         options={{
           headerShown: false,
@@ -190,48 +199,50 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="UserProfile"
-          component={UserProfileScreen}
-          options={{
-            headerStyle: { backgroundColor: "#1c1c1d" },
-            headerTintColor: "white",
-            title: "User Profile",
-            headerRight: () => <Logout />,
-          }}
-        />
-      </Stack.Navigator>
-      <StatusBar style="auto" />
-    </NavigationContainer>
+    <ChatContextProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Splash"
+            component={SplashScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="UserProfile"
+            component={UserProfileScreen}
+            options={{
+              headerStyle: { backgroundColor: "#1c1c1d" },
+              headerTintColor: "white",
+              title: "User Profile",
+              headerRight: () => <Logout />,
+            }}
+          />
+        </Stack.Navigator>
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </ChatContextProvider>
   );
 }

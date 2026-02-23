@@ -1,6 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
-  Alert,
   FlatList,
   Image,
   Pressable,
@@ -9,21 +11,21 @@ import {
   Text,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import InfoCard from "../components/InfoCard";
-import TripCard from "../components/TripCard";
 import PlaceCard from "../components/PlaceCard";
+import TripCard from "../components/TripCard";
 import {
   getFavouriteTrip,
   makeFavouriteTrip,
   removeFavouriteTrip,
 } from "../util/database";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { jwtDecode } from "jwt-decode";
 
 function TripDetailsScreen({ navigation, route }) {
   const [tour, setTour] = useState();
   const [favouriteTour, setFavouriteTour] = useState(false);
+  const [hotelRootTitle, setHotelRootTitle] = useState(
+    "Best Stays for Your Budget",
+  );
 
   useEffect(() => {
     async function checkIfFavourite() {
@@ -47,6 +49,10 @@ function TripDetailsScreen({ navigation, route }) {
       navigation.setOptions({ title: `${title}` });
     }
 
+    if (screenType === "IntrestedTrip") {
+      setHotelRootTitle("Best Stays for you");
+    }
+
     if (route.params?.item) {
       setTour(route.params.item);
     }
@@ -66,6 +72,7 @@ function TripDetailsScreen({ navigation, route }) {
     };
   }, [navigation, route.params]);
 
+  // TODO: ERROR is trip and intrestedtrip are in diffrent place so the tour id is undefined that why from intresredtrip it not save the trip.
   const favouriteTripHandler = async () => {
     const newsFavourite = !favouriteTour;
     setFavouriteTour(newsFavourite);
@@ -102,7 +109,7 @@ function TripDetailsScreen({ navigation, route }) {
           <Text style={styles.descriptionText}>{tour?.description}</Text>
         </View>
         <View>
-          <Text style={styles.bestStayTitle}>Best Stays for Your Budget</Text>
+          <Text style={styles.bestStayTitle}>{hotelRootTitle}</Text>
           <View>
             {tour?.hotels?.map((item) => (
               <TripCard

@@ -8,7 +8,9 @@ const app = express();
 const userRouter = require("./routers/userRouter");
 const tripRouter = require("./routers/tripRouter");
 const intrestedTripRouter = require("./routers/IntrestedTripRouter");
+const chatbotRouter = require("./routers/chatbotRouter");
 const AppError = require("./utils/AppError");
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -41,6 +43,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/trips", tripRouter);
 app.use("/api/v1/intrestedTrips", intrestedTripRouter);
+app.use("/api/v1/chatbot", chatbotRouter);
 
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on the server`, 404));

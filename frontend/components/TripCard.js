@@ -80,11 +80,11 @@ function TripCard({ item, onPress, screenType }) {
           </Text>
           <Text style={styles.price}>{price}</Text>
 
-          {showBuffer && (
+          {/* {showBuffer && (
             <Text style={styles.buffer}>
               ₹{item.bufferCost.toLocaleString()} buffer
             </Text>
-          )}
+          )} */}
 
           <Text style={styles.tripStyle} numberOfLines={2}>
             {description}
